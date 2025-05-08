@@ -11,24 +11,27 @@
 @interface DayNightSwitch : UIView
 
 /// Called as soon as the value changes (probably because the user tapped it)
-@property (nonatomic, copy, nullable) void (^changeAction)(BOOL);
+@property (nonatomic, copy, nullable) void (^changeAction)(BOOL, BOOL);
 
 /// Determines the state of the button, animates changes
-@property (nonatomic) BOOL on;
+@property (nonatomic, assign) BOOL on;
 
 /// Dark blue border layer
-@property (nonatomic, nonnull, retain) CAShapeLayer *offBorder;
+@property (nonatomic, nonnull, strong) CAShapeLayer *offBorder;
 
 /// Light blue layer below the `offBorder`
-@property (nonatomic, nonnull, retain) CAShapeLayer *onBorder;
+@property (nonatomic, nonnull, strong) CAShapeLayer *onBorder;
 
 /// Small white dots on the off state background
-@property (nonatomic, nullable, retain) NSArray<UIView *> *stars;
+@property (nonatomic, nullable, strong) NSArray<UIView *> *stars;
 
 /// Cloud image visible on top of the on state knob
-@property (nonatomic, nonnull, assign) UIImageView *cloud;
+@property (nonatomic, nonnull, strong) UIImageView *cloud;
 
 - (CGFloat)knobMargin;
 - (nonnull instancetype)initWithCenter:(CGPoint)center;
+
+- (void)blockChangeActionAnimated:(BOOL)animated;
+- (void)unblockChangeAction;
 
 @end

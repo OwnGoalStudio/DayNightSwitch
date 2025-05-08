@@ -2,3 +2,5 @@
 .theos/
 packages/
 *.deb
+compile_commands.json
+.cache/

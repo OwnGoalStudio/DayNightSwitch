@@ -10,7 +10,7 @@
 			<key>label</key>
 			<string>Global</string>
 			<key>footerText</key>
-			<string>Switching this on will change ALL switches to show the DayNightSwitch instead of just the Do Not Disturb one</string>
+			<string>Switching this on will change ALL switches to show the DayNightSwitch instead of just the Do Not Disturb one.</string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -34,7 +34,7 @@
 			<key>key</key>
 			<string>global</string>
 			<key>label</key>
-			<string>Enable global</string>
+			<string>Enabled Globally</string>
 		</dict>
 		<dict>
 			<key>action</key>

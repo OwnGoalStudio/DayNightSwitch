@@ -1,11 +1,13 @@
-#include "FGARootListController.h"
-#include <spawn.h>
+#import "FGARootListController.h"
+
+#import <roothide.h>
+#import <spawn.h>
 
 @implementation FGARootListController
 
 - (NSArray *)specifiers {
     if (!_specifiers) {
-        _specifiers = [[self loadSpecifiersFromPlistName:@"Root" target:self] retain];
+        _specifiers = [self loadSpecifiersFromPlistName:@"Root" target:self];
     }
     
     return _specifiers;
@@ -13,8 +15,8 @@
 
 - (void)respring {
     pid_t pid;
-    const char* args[] = {"killall", "-9", "SpringBoard", NULL};
-    posix_spawn(&pid, "/usr/bin/killall", NULL, NULL, (char* const*)args, NULL);
+    const char* args[] = {"killall", "-9", "SpringBoard", "backboardd", NULL};
+    posix_spawn(&pid, jbroot("/usr/bin/killall"), NULL, NULL, (char* const*)args, NULL);
 }
 
 - (void)twitter {
