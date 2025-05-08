@@ -431,8 +431,10 @@
     if (self.dragging) {
         return;
     }
-
+    
+    self.dragging = YES;
     self.on = !self.on;
+    self.dragging = NO;
 }
 
 - (void)setOn:(BOOL)on {

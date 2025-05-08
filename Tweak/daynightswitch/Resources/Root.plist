@@ -8,21 +8,7 @@
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
-			<string>Global</string>
-			<key>footerText</key>
-			<string>Switching this on will change ALL switches to show the DayNightSwitch instead of just the Do Not Disturb one.</string>
-		</dict>
-		<dict>
-			<key>cell</key>
-			<string>PSSwitchCell</string>
-			<key>default</key>
-			<true/>
-			<key>defaults</key>
-			<string>de.finngaida.daynightswitch</string>
-			<key>key</key>
-			<string>enabled</string>
-			<key>label</key>
-			<string>Enabled</string>
+			<string></string>
 		</dict>
 		<dict>
 			<key>cell</key>
@@ -34,7 +20,7 @@
 			<key>key</key>
 			<string>global</string>
 			<key>label</key>
-			<string>Enabled Globally</string>
+			<string>Enabled</string>
 		</dict>
 		<dict>
 			<key>action</key>
@@ -42,15 +28,36 @@
 			<key>cell</key>
 			<string>PSButtonCell</string>
 			<key>label</key>
-			<string>Respring</string>
+			<string>Respring to Apply Changes</string>
+			<key>isDestructive</key>
+			<true/>
 		</dict>
+
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string></string>
+			<key>footerText</key>
+			<string>Please support our paid works, thank you!</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSButtonCell</string>
+			<key>label</key>
+			<string>Fixed with ♥ by OwnGoal Studio</string>
+			<key>action</key>
+			<string>support</string>
+		</dict>
+
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>About</string>
 			<key>footerText</key>
-			<string>Copyright ⓒ 2016 Finn Gaida</string>
+			<string>Copyright ⓒ 2016 Finn Gaida
+Copyright ⓒ 2025 OwnGoal Studio</string>
 		</dict>
 		<dict>
 			<key>action</key>
