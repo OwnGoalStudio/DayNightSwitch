@@ -74,9 +74,7 @@ static void loadPrefs(void) {
 
 %new
 - (void)dns_addSwitch {
-    DayNightSwitch *sub = [[DayNightSwitch alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, self.frame.size.height)];
-
-    sub.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
+    DayNightSwitch *sub = [[DayNightSwitch alloc] initWithFrame:CGRectMake(0, 0, 51, 31)];
 
     self.dns_bypass = @YES;
     sub.on = self.on;
