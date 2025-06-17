@@ -23,10 +23,10 @@
 @interface Knob : UIView
 
 /// Visual state of the knob, animates changes
-@property(nonatomic, assign) BOOL on;
+@property(nonatomic, assign, getter=isOn) BOOL on;
 
 /// Horizontally expanded state of the knob, animates changes
-@property(nonatomic, assign) BOOL expanded;
+@property(nonatomic, assign, getter=isExpanded) BOOL expanded;
 
 /// Round subview of the knob
 @property(nonatomic, strong) UIView *subview;
@@ -143,7 +143,7 @@
                              self.subview.backgroundColor = offSubviewColor;
                          }
 
-                         BOOL cache = self.expanded;
+                         BOOL cache = self.isExpanded;
                          [self _setExpanded:cache];
                      }
                      completion:nil];
@@ -154,7 +154,7 @@
           initialSpringVelocity:0
                         options:UIViewAnimationOptionAllowUserInteraction
                      animations:^{
-                         self.subview.transform = CGAffineTransformMakeRotation(M_PI * ((self.on) ? 0.2 : -0.2));
+                         self.subview.transform = CGAffineTransformMakeRotation(M_PI * ((self.isOn) ? 0.2 : -0.2));
                      }
                      completion:nil];
 }
@@ -171,7 +171,7 @@
 
 - (void)_setExpanded:(BOOL)expanded {
     CGFloat newWidth = self.frame.size.height * (expanded ? 1.25 : 1);
-    CGFloat x = (self.on) ? self.superview.frame.size.width - newWidth - [(DayNightSwitch *)self.superview knobMargin]
+    CGFloat x = (self.isOn) ? self.superview.frame.size.width - newWidth - [(DayNightSwitch *)self.superview knobMargin]
                           : self.frame.origin.x;
 
     [UIView animateWithDuration:(_shouldAnimate ? 0.8 : 0)
@@ -182,12 +182,12 @@
                      animations:^{
                          self.frame = CGRectMake(x, self.frame.origin.y, newWidth, self.frame.size.height);
                          self.subview.center =
-                             CGPointMake((self.on) ? self.frame.size.width - self.frame.size.height / 2
+                             CGPointMake((self.isOn) ? self.frame.size.width - self.frame.size.height / 2
                                                    : self.frame.size.height / 2,
                                          self.subview.center.y);
 
                          for (UIView *v in self.craters) {
-                             v.alpha = (self.on) ? 0 : 1;
+                             v.alpha = (self.isOn) ? 0 : 1;
                          }
                      }
                      completion:nil];
@@ -200,7 +200,7 @@
 @end
 
 @interface DayNightLayerDelegate : NSObject <CALayerDelegate>
-@property(nonatomic, assign) BOOL animated;
+@property(nonatomic, assign, getter=isAnimated) BOOL animated;
 @end
 
 @implementation DayNightLayerDelegate
@@ -216,12 +216,12 @@
 /// Round white knob
 @property(nonatomic, strong) Knob *knob;
 
-@property(nonatomic, assign) BOOL moved;
+@property(nonatomic, assign, getter=isMoved) BOOL moved;
 
 /// This prevents the tap gesture recognizer from interfering the drag movement
-@property(nonatomic, assign) BOOL dragging;
+@property(nonatomic, assign, getter=isDragging) BOOL dragging;
 
-@property(nonatomic, assign) BOOL isOnBeforeDrag;
+@property(nonatomic, assign, getter=isOnBeforeDrag) BOOL onBeforeDrag;
 
 @property(nonatomic, strong) DayNightLayerDelegate *layerDelegate;
 
@@ -231,6 +231,7 @@
 @implementation DayNightSwitch {
     BOOL _shouldSkipChangeAction;
     BOOL _shouldAnimate;
+    BOOL _shouldAnimateImportant;
 }
 
 /// Width of the darker border of the background
@@ -360,6 +361,8 @@
  Init method called by all initializers. The switch is initialized off by default
  */
 - (void)commonInit {
+    _shouldAnimateImportant = YES;
+
     self.moved = NO;
     self.dragging = NO;
     self.layer.masksToBounds = YES;
@@ -391,15 +394,15 @@
     CGPoint touchLocation = [sender locationInView:self];
 
     if (sender.state == UIGestureRecognizerStateBegan) {
-        self.isOnBeforeDrag = self.on;
+        self.onBeforeDrag = self.isOn;
         self.dragging = YES;
         self.knob.expanded = YES;
     } else if (sender.state == UIGestureRecognizerStateChanged) {
         self.moved = YES;
 
-        if (touchLocation.x > self.frame.size.width / 2 && !self.on) {
+        if (touchLocation.x > self.frame.size.width / 2 && !self.isOn) {
             self.on = YES;
-        } else if (touchLocation.x < self.frame.size.width / 2 && self.on) {
+        } else if (touchLocation.x < self.frame.size.width / 2 && self.isOn) {
             self.on = NO;
         }
     } else if (sender.state == UIGestureRecognizerStateEnded || sender.state == UIGestureRecognizerStateCancelled ||
@@ -409,8 +412,8 @@
         self.dragging = NO;
         self.moved = NO;
 
-        if (self.on != self.isOnBeforeDrag && self.changeAction) {
-            self.changeAction(self.on, YES);
+        if (self.isOn != self.isOnBeforeDrag && self.changeAction) {
+            self.changeAction(self.isOn, YES);
         }
     }
 }
@@ -428,12 +431,12 @@
 }
 
 - (void)tapGestureOccurred:(UITapGestureRecognizer *)sender {
-    if (self.dragging) {
+    if (self.isDragging) {
         return;
     }
     
     self.dragging = YES;
-    self.on = !self.on;
+    self.on = !self.isOn;
     self.dragging = NO;
 }
 
@@ -450,10 +453,10 @@
 - (void)_setOn:(BOOL)on {
     // call the action closure
     if (self.changeAction && !_shouldSkipChangeAction) {
-        self.changeAction(on, !self.moved);
+        self.changeAction(on, !self.isMoved);
     }
 
-    BOOL shouldAnimate = _shouldAnimate || self.dragging;
+    BOOL shouldAnimate = (_shouldAnimate || self.isDragging) && _shouldAnimateImportant;
 
     [self.layerDelegate setAnimated:shouldAnimate];
     [self.knob setAnimated:shouldAnimate];
@@ -487,35 +490,55 @@
                 UIView *star = self.stars[i];
                 star.alpha = (on) ? 0 : 1;
 
-                dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * i * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                    star.transform = CGAffineTransformMakeScale(1.5, 1.5);
+                if (shouldAnimate) {
+                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.1 * i * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                        star.transform = CGAffineTransformMakeScale(1.5, 1.5);
 
-                    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
-                        star.transform = CGAffineTransformIdentity;
+                        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, 0.05 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+                            star.transform = CGAffineTransformIdentity;
+                        });
                     });
-                });
+                } else {
+                    star.transform = CGAffineTransformIdentity;
+                }
+            }
+
+            if (!shouldAnimate) {
+                if (on) {
+                    self.offBorder.strokeStart = 0.0;
+                    self.offBorder.strokeEnd = 0.0;
+                } else {
+                    self.offBorder.strokeStart = 0.0;
+                    self.offBorder.strokeEnd = 1.0;
+                }
             }
         }
         completion:^(BOOL finished) {
             // reset the values
-            if (on) {
-                self.offBorder.strokeStart = 0.0;
-                self.offBorder.strokeEnd = 0.0;
-            } else {
-                self.offBorder.strokeStart = 0.0;
-                self.offBorder.strokeEnd = 1.0;
+            if (shouldAnimate) {
+                if (on) {
+                    self.offBorder.strokeStart = 0.0;
+                    self.offBorder.strokeEnd = 0.0;
+                } else {
+                    self.offBorder.strokeStart = 0.0;
+                    self.offBorder.strokeEnd = 1.0;
+                }
             }
         }];
 }
 
 - (void)blockChangeActionAnimated:(BOOL)animated {
     _shouldSkipChangeAction = YES;
-    _shouldAnimate = animated;
+    _shouldAnimate = animated && _shouldAnimateImportant;
     [self.knob setAnimated:animated];
 }
 
 - (void)unblockChangeAction {
     _shouldSkipChangeAction = NO;
+}
+
+- (void)dns_disableAnimations {
+    _shouldAnimateImportant = NO;
 }
 
 @end

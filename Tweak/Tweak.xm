@@ -115,3 +115,32 @@ static void loadPrefs(void) {
 }
 
 %end
+
+static UIView *FindViewOfClass(UIView *view, Class cls) {
+    if ([view isKindOfClass:cls]) {
+        return view;
+    }
+    for (UIView *subview in view.subviews) {
+        UIView *foundView = FindViewOfClass(subview, cls);
+        if (foundView) {
+            return foundView;
+        }
+    }
+    return nil;
+}
+
+@interface MTAAlarmTableViewCell : UITableViewCell
+@end
+
+%hook MTAAlarmTableViewCell
+
+- (void)layoutSubviews {
+    %orig;
+
+    UIView *theView = FindViewOfClass(self.contentView, [DayNightSwitch class]);
+    if ([theView respondsToSelector:@selector(dns_disableAnimations)]) {
+        [(DayNightSwitch *)theView dns_disableAnimations];
+    }
+}
+
+%end

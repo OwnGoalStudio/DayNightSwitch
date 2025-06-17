@@ -14,7 +14,7 @@
 @property (nonatomic, copy, nullable) void (^changeAction)(BOOL, BOOL);
 
 /// Determines the state of the button, animates changes
-@property (nonatomic, assign) BOOL on;
+@property (nonatomic, assign, getter=isOn) BOOL on;
 
 /// Dark blue border layer
 @property (nonatomic, nonnull, strong) CAShapeLayer *offBorder;
@@ -33,5 +33,7 @@
 
 - (void)blockChangeActionAnimated:(BOOL)animated;
 - (void)unblockChangeAction;
+
+- (void)dns_disableAnimations;
 
 @end
